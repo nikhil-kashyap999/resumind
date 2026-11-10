@@ -12,21 +12,18 @@ import {
   CheckCircle2,
   ScanSearch,
 } from "lucide-react";
-import AnalysisResult from "@/components/AnalysisResult";
-import { AnalysisResultData } from "@/types/AnalysisResultType";
 import { useAnalysisResult } from "@/context/AnalysisContext";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const [file, setFile] = useState<File | null>(null);
-  const [jobDescription, setJobDescription] = useState("");
-  const [dragging, setDragging] = useState(false);
-  const [message, setMessage] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [resumeText, setResumeText] = useState("");
-  const [loading, setLoading] = useState(false);
   const { setResult } = useAnalysisResult();
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [jobDescription, setJobDescription] = useState("");
 
   const handleFile = (selectedFile?: File) => {
     if (!selectedFile) return;
@@ -36,6 +33,10 @@ export default function Home() {
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
+    if (selectedFile.size > 4 * 1024 * 1024) {
+      setMessage("PDF size should be less then 4MB ");
+      return;
+    }
 
     if (!allowedTypes.includes(selectedFile.type)) {
       setMessage("Please upload a PDF or Word document.");
@@ -48,22 +49,15 @@ export default function Home() {
 
   const handleAnalyze = async () => {
     try {
-      if (!resumeText.trim() || !jobDescription.trim()) {
+      if (!file || !jobDescription.trim()) {
         return;
       }
 
       setLoading(true);
-
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          resume: resumeText,
-          jd: jobDescription,
-        }),
-      });
+      const form = new FormData();
+      form.append("resume", file);
+      form.append("jd", jobDescription);
+      const res = await fetch("/api/analyze", { method: "POST", body: form });
 
       const data = await res.json();
 
@@ -154,7 +148,7 @@ export default function Home() {
 
               <span className="text-xs text-zinc-600">01 / 02</span>
             </div>
-            {/*
+
             <div
               onDragOver={(e) => {
                 e.preventDefault();
@@ -234,9 +228,9 @@ export default function Home() {
                   </div>
                 </>
               )}
-            </div> */}
+            </div>
 
-            <div className="relative">
+            {/* <div className="relative">
               <textarea
                 value={resumeText}
                 onChange={(e) => {
@@ -259,7 +253,7 @@ Example:
               <div className="absolute bottom-4 right-4 text-[11px] text-zinc-600">
                 {jobDescription.length} characters
               </div>
-            </div>
+            </div> */}
 
             <p className="mt-4 text-xs text-zinc-600">
               <ShieldCheck size={13} className="mr-1 inline text-emerald-500" />
@@ -322,7 +316,7 @@ We are looking for a Full Stack Developer with experience in React, Next.js, Nod
         <div className="mx-auto mt-8 max-w-xl text-center">
           <button
             onClick={handleAnalyze}
-            disabled={!resumeText || !jobDescription.trim() || loading}
+            disabled={!file || !jobDescription.trim() || loading}
             className="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-liner-to-r from-blue-500 to-indigo-600 px-8 py-4 text-sm font-semibold shadow-xl shadow-blue-900/30 transition hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/20 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto sm:min-w-70 cursor-pointer"
           >
             <Sparkles size={18} />

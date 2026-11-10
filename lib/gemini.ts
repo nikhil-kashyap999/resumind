@@ -13,7 +13,7 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
 
 
 export async function generateJson<T>(
-    prompt: string,
+    parts: any,
     parse: (raw: string) => T
 ): Promise<{ data: T; model: string }> {
     const errors: string[] = [];
@@ -23,7 +23,7 @@ export async function generateJson<T>(
             const res = await withTimeout(
                 ai.models.generateContent({
                     model,
-                    contents: prompt,
+                    contents: [{role:"user",parts}],
                     config: { responseMimeType: "application/json" },
                 }),
                 TIMEOUT_MS
