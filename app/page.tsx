@@ -323,10 +323,10 @@ We are looking for a Full Stack Developer with experience in React, Next.js, Nod
           <button
             onClick={handleAnalyze}
             disabled={!resumeText || !jobDescription.trim() || loading}
-            className="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-liner-to-r from-blue-600 to-indigo-600 px-8 py-4 text-sm font-semibold shadow-xl shadow-blue-900/30 transition hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/20 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto sm:min-w-70 cursor-pointer"
+            className="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-liner-to-r from-blue-500 to-indigo-600 px-8 py-4 text-sm font-semibold shadow-xl shadow-blue-900/30 transition hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/20 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto sm:min-w-70 cursor-pointer"
           >
             <Sparkles size={18} />
-            {loading ? "Loading..." : "Analyze My Resume"}
+            {loading ? "Analysing..." : "Analyze My Resume"}
             <ArrowUpRight
               size={18}
               className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
